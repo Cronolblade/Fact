@@ -1,10 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
     <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login de Cliente</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 90vh;
+                background-color: #f4f4f4;
+                margin: 0;
+            }
+            .login-container {
+                background-color: #fff;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.1);
+                width: 320px;
+            }
+            h2 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 25px;
+            }
+            .input-group {
+                margin-bottom: 20px;
+            }
+            .input-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: #555;
+                font-weight: bold;
+            }
+            .input-group input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            button {
+                width: 100%;
+                padding: 12px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            #messageArea {
+                margin-top: 20px;
+                padding: 10px;
+                border-radius: 4px;
+                text-align: center;
+                font-weight: bold;
+            }
+            .success {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+            .error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+        </style>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <div class="login-container">
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="logiClie">Usuario (logiClie):</label>
+                    <input type="text" id="logiClie" name="logiClie" required>
+                </div>
+                <div class="input-group">
+                    <label for="passClie">Contraseña (passClie):</label>
+                    <input type="password" id="passClie" name="passClie" required>
+                </div>
+                <button type="submit">Ingresar</button>
+            </form>
+            <div id="messageArea"></div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const loginForm = document.getElementById('loginForm');
+                const messageArea = document.getElementById('messageArea');
+
+                loginForm.addEventListener('submit', async function (event) {
+                    event.preventDefault(); // Evitar el envío tradicional del formulario
+
+                    const logiClie = document.getElementById('logiClie').value;
+                    const passClie = document.getElementById('passClie').value;
+
+                    messageArea.textContent = '';
+                    messageArea.className = '';
+
+                    if (!logiClie || !passClie) {
+                        showMessage('Por favor, ingrese usuario y contraseña.', 'error');
+                        return;
+                    }
+
+                    const formData = new URLSearchParams();
+                    formData.append('logiClie', logiClie);
+                    formData.append('passClie', passClie);
+
+                    try {
+                        const response = await fetch('LoginServlet', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                        }
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // MODIFICACIÓN AQUÍ:
+                            // Muestra el mensaje de bienvenida (opcional, puede ser breve)
+                            showMessage(result.message + (result.user ? ` Hola, ${result.user.nombre}!` : ''), 'success');
+
+                            // Redirige a cliente.html después de un breve retraso (para que el usuario vea el mensaje)
+                            // O redirige inmediatamente si prefieres.
+                            setTimeout(() => {
+                                window.location.href = 'cliente.html'; // <--- ¡ESTA ES LA LÍNEA CLAVE!
+                            }, 1500); // Retraso de 1.5 segundos (1500 milisegundos)
+
+                            // Si quieres redirigir inmediatamente sin mensaje visible por mucho tiempo:
+                            // window.location.href = 'cliente.html';
+                            // En este caso, podrías quitar el showMessage o hacerlo muy breve.
+
+                        } else {
+                            showMessage(result.message || 'Error desconocido en el login.', 'error');
+                        }
+
+                    } catch (error) {
+                        console.error('Error en la petición de login:', error);
+                        showMessage('Error de conexión o respuesta inesperada del servidor. Detalles: ' + error.message, 'error');
+                    }
+                });
+
+                function showMessage(message, type) {
+                    messageArea.textContent = message;
+                    messageArea.className = type;
+                }
+            });
+        </script>
     </body>
 </html>

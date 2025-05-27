@@ -1,8 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package dao;
+package dao; 
 
 import dao.exceptions.NonexistentEntityException;
 import dto.Cliente;
@@ -12,6 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException; // Importar
+import javax.persistence.TypedQuery;      // Importar
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -29,6 +27,8 @@ public class ClienteJpaController implements Serializable {
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
+
+    // ... (métodos existentes create, edit, destroy, findClienteEntities, findCliente, getClienteCount)
 
     public void create(Cliente cliente) {
         EntityManager em = null;
@@ -133,5 +133,19 @@ public class ClienteJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    // NUEVO MÉTODO PARA LOGIN
+    public Cliente findClienteByLogin(String logiClie) {
+        EntityManager em = getEntityManager();
+        try {
+            // Usamos la NamedQuery definida en la entidad Cliente
+            TypedQuery<Cliente> query = em.createNamedQuery("Cliente.findByLogiClie", Cliente.class);
+            query.setParameter("logiClie", logiClie);
+            return query.getSingleResult(); // Esperamos un único resultado o lanza NoResultException
+        } catch (NoResultException e) {
+            return null; // Retorna null si no se encuentra el cliente
+        } finally {
+            em.close();
+        }
+    }
 }
