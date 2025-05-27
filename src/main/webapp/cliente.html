@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Estilo SB Admin 2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous">
+    <!-- SB Admin 2 Font (Nunito) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* SB Admin 2 Inspired Styles */
+        :root {
+            --sb-primary: #4e73df;
+            --sb-secondary: #858796;
+            --sb-success: #1cc88a;
+            --sb-info: #36b9cc;
+            --sb-warning: #f6c23e;
+            --sb-danger: #e74a3b;
+            --sb-light: #f8f9fc;
+            --sb-dark: #5a5c69;
+            --sb-font-sans-serif: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        body {
+            font-family: var(--sb-font-sans-serif);
+            background-color: var(--sb-light);
+            color: var(--sb-dark);
+            padding-top: 1.5rem; /* Ajuste para simular el padding del content wrapper */
+            padding-bottom: 1.5rem;
+        }
+
+        .container {
+            max-width: 960px; /* Un poco más ancho, común en dashboards */
+        }
+
+        h1.page-title {
+            font-size: 1.75rem;
+            color: #5a5c69;
+            font-weight: 400; /* SB Admin usa un peso más ligero para títulos de página */
+            margin-bottom: 1.5rem !important; /* Mayor espaciado */
+        }
+
+        /* Card Styling */
+        .card {
+            border: 1px solid #e3e6f0; /* Borde de tarjeta SB Admin 2 */
+            border-radius: 0.35rem; /* Radio de borde SB Admin 2 */
+            margin-bottom: 1.5rem; /* Margen inferior de tarjeta SB Admin 2 */
+        }
+        
+        .card .card-header-sb { /* Custom class para simular card-header */
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 0;
+            background-color: #f8f9fc; /* Color de fondo de cabecera de tarjeta */
+            border-bottom: 1px solid #e3e6f0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--sb-primary); /* Color primario para el texto del header */
+            border-top-left-radius: 0.35rem;
+            border-top-right-radius: 0.35rem;
+        }
+        
+        .form-container .card-body, .table-container .card-body {
+            padding: 1.25rem;
+        }
+
+        /* Form elements adjustments */
+        .form-label {
+            font-weight: 600;
+            color: #5a5c69; /* Un poco más oscuro para labels */
+        }
+
+        .form-control {
+            border-radius: 0.35rem;
+            border-color: #d1d3e2; /* Color de borde de input SB Admin 2 */
+        }
+        .form-control:focus {
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        /* Button Styling */
+        .btn {
+            border-radius: 0.35rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem; /* SB Admin 2 usa botones un poco más pequeños */
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--sb-primary);
+            border-color: var(--sb-primary);
+        }
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2653b4;
+        }
+
+        .btn-secondary {
+            background-color: var(--sb-secondary);
+            border-color: var(--sb-secondary);
+            color: #fff; /* SB Admin 2 usa texto blanco en botones secundarios */
+        }
+        .btn-secondary:hover {
+            background-color: #717384;
+            border-color: #60616f;
+        }
+        
+        .btn-warning { /* Bootstrap ya tiene estos colores, pero podemos asegurar consistencia */
+            background-color: var(--sb-warning);
+            border-color: var(--sb-warning);
+            color: #fff; /* Asegurar contraste */
+        }
+        .btn-warning:hover {
+            background-color: #f4b619;
+            border-color: #f4b619;
+        }
+        .btn-danger {
+            background-color: var(--sb-danger);
+            border-color: var(--sb-danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background-color: #e02d1b;
+            border-color: #d02110;
+        }
+
+        /* Table Styling */
+        .table {
+            color: var(--sb-dark);
+        }
+        .table thead { /* SB Admin 2 usa un header de tabla más ligero o primario */
+            background-color: #eaecf4; /* Un gris claro para el encabezado */
+            color: var(--sb-primary); /* Texto primario */
+            border-bottom: 2px solid var(--sb-primary); /* Línea inferior más gruesa */
+        }
+        .table th {
+            font-weight: 700;
+            border-top: none; /* Quitar borde superior por defecto de th */
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f0f2f8; /* Un hover sutil */
+        }
+        .table-bordered {
+            border-color: #e3e6f0;
+        }
+        .table td, .table th {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        /* Input group (si lo usaras en el futuro) */
+        .input-group-text {
+            border-radius: 0.35rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4 text-center page-title">Gestión de Clientes</h1>
+
+        <!-- Formulario para Crear/Editar Clientes -->
+        <div class="card shadow-sm form-container">
+            <div class="card-header-sb">
+                <h2 class="mb-0" id="formTitle">Nuevo Cliente</h2>
+            </div>
+            <div class="card-body">
+                <form id="clienteForm">
+                    <input type="hidden" id="codiClie" name="codiClie">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="ndniClie" class="form-label">DNI:</label>
+                            <input type="text" class="form-control" id="ndniClie" name="ndniClie" maxlength="8" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nombClie" class="form-label">Nombres:</label>
+                            <input type="text" class="form-control" id="nombClie" name="nombClie" maxlength="50" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="appaClie" class="form-label">Apellido Paterno:</label>
+                            <input type="text" class="form-control" id="appaClie" name="appaClie" maxlength="50" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="apmaClie" class="form-label">Apellido Materno:</label>
+                            <input type="text" class="form-control" id="apmaClie" name="apmaClie" maxlength="50" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fechNaciClie" class="form-label">Fecha de Nacimiento:</label>
+                            <input type="date" class="form-control" id="fechNaciClie" name="fechNaciClie" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="logiClie" class="form-label">Login (Email):</label>
+                            <input type="email" class="form-control" id="logiClie" name="logiClie" maxlength="100" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="passClie" class="form-label">Contraseña:</label>
+                        <input type="password" class="form-control" id="passClie" name="passClie" maxlength="50" required>
+                        <small id="passwordHelp" class="form-text text-muted">Requerida para nuevos clientes. Para editar, solo si desea cambiarla.</small>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" id="btnLimpiar">Limpiar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar Cliente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla para Listar Clientes -->
+        <div class="card shadow-sm table-container">
+             <div class="card-header-sb">
+                <h2 class="mb-0">Listado de Clientes</h2>
+            </div>
+            <div class="card-body p-0"> <!-- p-0 para que la tabla ocupe todo el card-body -->
+                <div class="table-responsive"> <!-- Importante para tablas anchas en móviles -->
+                    <table class="table table-striped table-hover table-bordered mb-0"> <!-- mb-0 para quitar margen inferior de la tabla dentro del card -->
+                        <thead> <!-- Quitamos table-dark, usamos el estilo CSS personalizado -->
+                            <tr>
+                                <th>ID</th>
+                                <th>DNI</th>
+                                <th>Nombres</th>
+                                <th>Ap. Paterno</th>
+                                <th>Ap. Materno</th>
+                                <th>Fec. Nac.</th>
+                                <th>Login</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody">
+                            <!-- Las filas se insertarán aquí por JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const API_URL = 'ClienteServlet'; // <-- IMPORTANTE: Ajusta tu Context Path si es necesario
+
+            const clienteForm = document.getElementById('clienteForm');
+            const formTitle = document.getElementById('formTitle');
+            const codiClieInput = document.getElementById('codiClie');
+            const ndniClieInput = document.getElementById('ndniClie');
+            const nombClieInput = document.getElementById('nombClie');
+            const appaClieInput = document.getElementById('appaClie');
+            const apmaClieInput = document.getElementById('apmaClie');
+            const fechNaciClieInput = document.getElementById('fechNaciClie');
+            const logiClieInput = document.getElementById('logiClie');
+            const passClieInput = document.getElementById('passClie');
+            const btnLimpiar = document.getElementById('btnLimpiar');
+            const clientesTableBody = document.getElementById('clientesTableBody');
+
+            // --- FUNCIONES DE COMUNICACIÓN CON EL SERVLET (FETCH API) ---
+
+            async function fetchGetClientes() {
+                try {
+                    const response = await fetch(API_URL);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({error: `Error ${response.status}: ${response.statusText}`}));
+                        throw new Error(errorData.error || `Error ${response.status}`);
+                    }
+                    const clientes = await response.json();
+                    renderClientesTable(clientes);
+                } catch (error) {
+                    console.error('Error en fetchGetClientes:', error);
+                    alert(`Error al obtener clientes: ${error.message}`);
+                }
+            }
+
+            async function fetchGetClienteById(id) {
+                try {
+                    const response = await fetch(`${API_URL}?codiClie=${id}`);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({error: `Error ${response.status}: ${response.statusText}`}));
+                        throw new Error(errorData.error || `Error ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error en fetchGetClienteById:', error);
+                    alert(`Error al obtener cliente: ${error.message}`);
+                    return null;
+                }
+            }
+
+            async function fetchPostCliente(clienteData) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(clienteData)
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({error: `Error ${response.status}: ${response.statusText}`}));
+                        throw new Error(errorData.error || `Error ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error en fetchPostCliente:', error);
+                    alert(`Error al crear cliente: ${error.message}`);
+                    return null;
+                }
+            }
+
+            async function fetchPutCliente(clienteData) {
+                try {
+                    const response = await fetch(API_URL, {// El ID va en el cuerpo para PUT en este diseño
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(clienteData)
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({error: `Error ${response.status}: ${response.statusText}`}));
+                        throw new Error(errorData.error || `Error ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error en fetchPutCliente:', error);
+                    alert(`Error al actualizar cliente: ${error.message}`);
+                    return null;
+                }
+            }
+
+            async function fetchDeleteCliente(id) {
+                try {
+                    const response = await fetch(`${API_URL}?codiClie=${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({error: `Error ${response.status}: ${response.statusText}`}));
+                        throw new Error(errorData.error || `Error ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error en fetchDeleteCliente:', error);
+                    alert(`Error al eliminar cliente: ${error.message}`);
+                    return null;
+                }
+            }
+
+            // --- FUNCIONES DE MANIPULACIÓN DEL DOM Y LÓGICA DE UI ---
+
+            function renderClientesTable(clientes) {
+                clientesTableBody.innerHTML = ''; // Limpiar tabla existente
+                if (!clientes || clientes.length === 0) {
+                    clientesTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay clientes registrados.</td></tr>';
+                    return;
+                }
+
+                clientes.forEach(cliente => {
+                    const row = clientesTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${cliente.codiClie || ''}</td>
+                        <td>${cliente.ndniClie || ''}</td>
+                        <td>${cliente.nombClie || ''}</td>
+                        <td>${cliente.appaClie || ''}</td>
+                        <td>${cliente.apmaClie || ''}</td>
+                        <td>${cliente.fechNaciClie || ''}</td>
+                        <td>${cliente.logiClie || ''}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning btn-editar" data-id="${cliente.codiClie}">Editar</button>
+                            <button class="btn btn-sm btn-danger btn-eliminar ms-1" data-id="${cliente.codiClie}">Eliminar</button>
+                        </td>
+                    `;
+                });
+
+                // Añadir event listeners a los nuevos botones
+                document.querySelectorAll('.btn-editar').forEach(button => {
+                    button.addEventListener('click', handleEditCliente);
+                });
+                document.querySelectorAll('.btn-eliminar').forEach(button => {
+                    button.addEventListener('click', handleDeleteCliente);
+                });
+            }
+
+            function resetForm() {
+                clienteForm.reset();
+                codiClieInput.value = ''; // Asegurar que el ID oculto esté vacío
+                formTitle.textContent = 'Nuevo Cliente';
+                passClieInput.required = true; // Contraseña requerida para nuevos
+                document.getElementById('passwordHelp').textContent = 'Requerida para nuevos clientes. Para editar, solo si desea cambiarla.';
+            }
+
+            async function handleFormSubmit(event) {
+                event.preventDefault();
+                const id = codiClieInput.value;
+
+                const clienteData = {
+                    ndniClie: ndniClieInput.value,
+                    nombClie: nombClieInput.value,
+                    appaClie: appaClieInput.value,
+                    apmaClie: apmaClieInput.value,
+                    fechNaciClie: fechNaciClieInput.value,
+                    logiClie: logiClieInput.value,
+                };
+
+                if (passClieInput.value || !id) {
+                    clienteData.passClie = passClieInput.value;
+                }
+
+                let result;
+                if (id) { 
+                    clienteData.codiClie = parseInt(id);
+                    result = await fetchPutCliente(clienteData);
+                } else { 
+                    result = await fetchPostCliente(clienteData);
+                }
+
+                if (result) {
+                    resetForm();
+                    fetchGetClientes(); 
+                    alert(id ? 'Cliente actualizado correctamente.' : 'Cliente creado correctamente.');
+                }
+            }
+
+            async function handleEditCliente(event) {
+                const id = event.target.dataset.id;
+                if (!id) return;
+
+                const cliente = await fetchGetClienteById(id);
+                if (cliente) {
+                    formTitle.textContent = 'Editar Cliente';
+                    codiClieInput.value = cliente.codiClie;
+                    ndniClieInput.value = cliente.ndniClie || '';
+                    nombClieInput.value = cliente.nombClie || '';
+                    appaClieInput.value = cliente.appaClie || '';
+                    apmaClieInput.value = cliente.apmaClie || '';
+                    fechNaciClieInput.value = cliente.fechNaciClie || ''; 
+                    logiClieInput.value = cliente.logiClie || '';
+                    passClieInput.value = ''; 
+                    passClieInput.required = false; 
+                    document.getElementById('passwordHelp').textContent = 'Dejar en blanco si no desea cambiar la contraseña.';
+                    window.scrollTo(0, 0); 
+                }
+            }
+
+            async function handleDeleteCliente(event) {
+                const id = event.target.dataset.id;
+                if (!id) return;
+
+                if (confirm(`¿Está seguro de que desea eliminar al cliente con ID ${id}?`)) {
+                    const result = await fetchDeleteCliente(id);
+                    if (result) { 
+                        fetchGetClientes(); 
+                        alert(result.message || 'Cliente eliminado correctamente.');
+                        resetForm(); 
+                    }
+                }
+            }
+
+            clienteForm.addEventListener('submit', handleFormSubmit);
+            btnLimpiar.addEventListener('click', resetForm);
+            fetchGetClientes();
+        });
+    </script>
+</body>
+</html>
