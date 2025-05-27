@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cambiar Contraseña</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 90vh;
+                background-color: #f4f4f4;
+                margin: 0;
+            }
+            .container {
+                background-color: #fff;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.1);
+                width: 380px;
+            }
+            h2 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 25px;
+            }
+            .input-group {
+                margin-bottom: 20px;
+            }
+            .input-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: #555;
+                font-weight: bold;
+            }
+            .input-group input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            button {
+                width: 100%;
+                padding: 12px;
+                background-color: #28a745;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            button:hover {
+                background-color: #218838;
+            }
+            #messageArea {
+                margin-top: 20px;
+                padding: 10px;
+                border-radius: 4px;
+                text-align: center;
+                font-weight: bold;
+            }
+            .success {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+            .error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Cambiar Contraseña</h2>
+            <form id="changePasswordForm">
+                <div class="input-group">
+                    <label for="currentPassword">Contraseña Actual:</label>
+                    <input type="password" id="currentPassword" name="currentPassword" required>
+                </div>
+                <div class="input-group">
+                    <label for="newPassword">Nueva Contraseña:</label>
+                    <input type="password" id="newPassword" name="newPassword" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirmNewPassword">Confirmar Nueva Contraseña:</label>
+                    <input type="password" id="confirmNewPassword" name="confirmNewPassword" required>
+                </div>
+                <button type="submit">Cambiar Contraseña</button>
+            </form>
+            <div id="messageArea"></div>
+            <p style="text-align:center; margin-top:15px;"><a href="index.html">Volver al Login</a></p>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const changePasswordForm = document.getElementById('changePasswordForm');
+                const messageArea = document.getElementById('messageArea');
+
+                changePasswordForm.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+                    messageArea.textContent = '';
+                    messageArea.className = '';
+
+                    // Validaciones del lado del cliente
+                    if (!currentPassword || !newPassword || !confirmNewPassword) {
+                        showMessage('Todos los campos son obligatorios.', 'error');
+                        return;
+                    }
+
+                    if (newPassword.length < 6) { // Ejemplo de política de contraseña mínima
+                        showMessage('La nueva contraseña debe tener al menos 6 caracteres.', 'error');
+                        return;
+                    }
+
+                    if (newPassword !== confirmNewPassword) {
+                        showMessage('Las nuevas contraseñas no coinciden.', 'error');
+                        return;
+                    }
+
+                    const formData = new URLSearchParams();
+                    formData.append('currentPassword', currentPassword);
+                    formData.append('newPassword', newPassword);
+                    formData.append('confirmNewPassword', confirmNewPassword); // El servlet también validará esto
+
+                    try {
+                        // Asegúrate de que la URL al servlet sea correcta
+                        const response = await fetch('ChangePasswordServlet', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            // Si el servidor responde con un error HTTP (ej. 500, 401 por no estar logueado)
+                            let errorMsg = `Error HTTP: ${response.status} ${response.statusText}`;
+                            try {
+                                const errorData = await response.json(); // Intenta leer el cuerpo del error si es JSON
+                                errorMsg = errorData.message || errorMsg;
+                            } catch (e) {
+                                // No hacer nada si el cuerpo del error no es JSON
+                            }
+                            throw new Error(errorMsg);
+                        }
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            showMessage(result.message, 'success');
+                            changePasswordForm.reset(); // Limpiar el formulario
+                            // Opcional: redirigir o realizar otra acción
+                            // setTimeout(() => {
+                            //    window.location.href = 'perfil.html'; // O a donde corresponda
+                            // }, 2000);
+                        } else {
+                            showMessage(result.message || 'Error al cambiar la contraseña.', 'error');
+                        }
+
+                    } catch (error) {
+                        console.error('Error en la petición de cambio de contraseña:', error);
+                        showMessage('Error de conexión o respuesta inesperada. Detalles: ' + error.message, 'error');
+                    }
+                });
+
+                function showMessage(message, type) {
+                    messageArea.textContent = message;
+                    messageArea.className = type; // 'success' o 'error'
+                }
+            });
+        </script>
+    </body>
+</html>
